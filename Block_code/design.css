@@ -1,0 +1,128 @@
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: row;
+    overflow-y: auto; /* Enables vertical scroll */
+
+}
+
+#palette {
+  width: 100px;
+  height: 650px;
+  padding: 10px;
+  background: #f3f3f3;
+  border-right: 2px solid #ccc;
+    border-radius: 35px;
+
+}
+
+.palette-item {
+  background: #fff;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+  padding: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+    border-radius: 20px;
+
+}
+
+#designArea{
+    border-radius: 40px;
+ flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: auto;
+height: 650px;
+  background: #eee;
+  padding: 10px;
+  position: relative;
+  
+}
+#blockArea {
+  flex: 1;
+  height: 100vh;
+  overflow-y: auto;
+  background: #eee;
+  padding: 10px;
+  position: relative;
+  border-radius: 50px;
+
+}
+
+#blocklyDiv {
+  height: calc(100% - 50px); /* reduce height by 50px */
+  width: 100%;
+  margin-top: 50px; /* push it down */
+  box-sizing: border-box;
+    border-radius: 50px;
+
+}
+
+
+.component {
+  background: white;
+  border: 1px solid #888;
+  padding: 8px 16px;
+  border-radius: 8px;
+  margin: 8px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+  position: absolute;
+  touch-action: none;
+}
+
+.led {
+  width: 50px;
+  height: 50px;
+  background-color: gray;
+  border-radius: 50%;
+  border: 2px solid #555;
+  transition: background-color 0.3s;
+}
+
+button {
+  margin: 10px;
+  padding: 10px;
+  font-size: 16px;
+  user-select: none;
+    border-radius: 20px;
+
+}
+
+#trashBin {
+  position: fixed;
+  bottom: 20px;
+  right: 0%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  background: rgb(173, 173, 173);
+  color: white;
+  text-align: center;
+  line-height: 100px;
+  border-radius: 12px;
+  font-weight: bold;
+  z-index: 1000;
+  user-select: none;
+  touch-action: none;
+}
+
+.hidden {
+  display: none !important;
+}
+
+
+#palette,
+#designArea,
+#blockArea {
+  margin-top: 80px;
+}
