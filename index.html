@@ -119,12 +119,12 @@
 
     <section id="contact" class="card" aria-labelledby="contact-heading">
       <h3 id="contact-heading" style="margin-top:0">Contact</h3>
-      <p class="meta">Prefer to keep it simple — email or Instagram only. Replace placeholders with your real handles before publishing.</p>
+      <p class="meta">Prefer to keep it simple — email or Instagram only.</p>
 
       <div class="contact-row">
-        <a class="link" href="mailto:mahdihasan3620tics@gmail.com">
-          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/gmail.svg" alt="Email"> Email
-        </a>
+        <a id="emailLink" class="link" href="mailto:mahdihasan3620tics@gmail.com">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/gmail.svg" alt="Email"> Email
+</a>
         <a class="link" href="https://instagram.com/mahdihasan1_" target="_blank" rel="noopener">
           <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram"> Instagram
         </a>
@@ -153,8 +153,71 @@
     }));
     function closeModal(){document.getElementById('modal').classList.remove('open');document.getElementById('modal').setAttribute('aria-hidden','true');}
     document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+
+
+    (function(){
+  const email = 'mahdihasan3620tics@gmail.com';
+  const link = document.getElementById('emailLink');
+
+  // Keep normal mailto behavior for users whose browsers allow it,
+  // but also try programmatic open and fallback to copy-to-clipboard.
+  link.addEventListener('click', function (ev) {
+    // Try to open mailto in a new window/tab (less likely to be blocked than direct window.location)
+    // We still return false to avoid double-handling if window.open worked.
+    ev.preventDefault();
+
+    const mailto = 'mailto:' + email + '?subject=' + encodeURIComponent('Hello Mahdi');
+
+    // Try to open. If returns null or throws, fallback.
+    let opened = null;
+    try {
+      opened = window.open(mailto);
+    } catch (err) {
+      opened = null;
+    }
+
+    // If open returned a window object, assume success.
+    if (opened) {
+      // Optionally focus it
+      try { opened.focus(); } catch (e) {}
+      return;
+    }
+
+    // Fallback: try assign href (some browsers handle this)
+    try {
+      window.location.href = mailto;
+      // give browser a moment — if it doesn't hand off, we go to fallback copy
+      setTimeout(() => {
+        // if page is still visible, try copy fallback below
+        if (!document.hidden) {
+          copyFallback();
+        }
+      }, 600);
+      return;
+    } catch (e) {
+      // continue to copy fallback
+    }
+
+    // Final fallback: copy email to clipboard and notify the user
+    copyFallback();
+
+    function copyFallback() {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(email).then(() => {
+          alert('Couldn\\'t open a mail client. The email address was copied to your clipboard: ' + email + '\\nPaste it into your mail app or webmail (Gmail, Outlook).');
+        }).catch(() => {
+          prompt('Couldn\\'t open a mail client. Please copy this email address:', email);
+        });
+      } else {
+        // older browsers
+        prompt('Couldn\\'t open a mail client. Please copy this email address:', email);
+      }
+    }
+  });
+})();
   </script>
 </body>
 </html>
+
 
 
