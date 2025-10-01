@@ -1,113 +1,189 @@
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Object-E</title>
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mahdi Hasan — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Showcasy-inspired single-file CSS
+       - Clean, spacious layout
+       - Left sticky sidebar with vertical social/contact
+       - Big hero, project cards grid, minimal UI
+    */
+    :root{
+      --bg:#0b1220;
+      --panel:#07101a;
+      --muted:#94a3b8;
+      --glass: rgba(255,255,255,0.04);
+      --accent1: linear-gradient(90deg,#14b8a6,#06b6d4);
+      --radius:18px;
+      color-scheme: dark;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{background:radial-gradient(1200px 600px at 10% 10%, rgba(6,182,212,0.06), transparent), radial-gradient(900px 400px at 90% 90%, rgba(20,184,166,0.04), transparent), var(--bg); color:#e6eef8;-webkit-font-smoothing:antialiased;}
+
+    .container{max-width:1120px;margin:40px auto;padding:28px;display:grid;grid-template-columns:220px 1fr;gap:28px}
+
+    /* left column (sticky) */
+    .sidebar{position:sticky;top:28px;height:fit-content;padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));backdrop-filter: blur(6px);border:1px solid rgba(255,255,255,0.03)}
+    .avatar{width:88px;height:88px;border-radius:14px;background:linear-gradient(135deg,#0ea5a4,#06b6d4);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;color:white;margin-bottom:12px}
+    .name{font-weight:800;font-size:18px;margin:0}
+    .age{color:var(--muted);font-size:13px;margin-top:6px}
+    .bio{margin-top:12px;color:var(--muted);font-size:13px;line-height:1.4}
+
+    .side-links{display:flex;flex-direction:column;gap:8px;margin-top:14px}
+    .side-links a{color:#bcd8e0;text-decoration:none;font-size:13px;padding:8px;border-radius:10px}
+    .small{color:var(--muted);font-size:13px}
+
+    /* main column */
+    .main{padding:18px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.02)}
+
+    .hero{display:flex;align-items:center;justify-content:space-between;gap:18px}
+    .hero-left{max-width:64%}
+    .eyebrow{color:var(--muted);font-weight:600;font-size:13px}
+    h1{font-size:44px;margin:6px 0 6px;line-height:1.02;letter-spacing:-0.02em}
+    .lead{color:var(--muted);font-size:15px;max-width:60%}
+
+    .cta-row{margin-top:18px;display:flex;gap:12px}
+    .btn{padding:10px 14px;border-radius:12px;font-weight:700;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+    .btn-primary{background:linear-gradient(90deg,#10b981,#06b6d4);color:#042023}
+    .btn-outline{border:1px solid rgba(255,255,255,0.06);background:transparent;color:#cfe9ef}
+
+    /* grid of cards */
+    .projects{margin-top:26px}
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .18s ease, box-shadow .18s ease}
+    .card:hover{transform:translateY(-8px);box-shadow:0 20px 40px rgba(2,6,23,0.5)}
+    .card-title{font-weight:700;margin:0;font-size:16px}
+    .card-sub{font-size:13px;color:var(--muted);margin-top:6px}
+    .tag{display:inline-block;margin-top:10px;padding:6px 8px;border-radius:10px;background:rgba(255,255,255,0.02);font-size:12px;color:var(--muted)}
+
+    /* footer */
+    footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.8));}
+    .modal.open{display:flex}
+    .modal .dialog{background:#08121a;padding:20px;border-radius:12px;max-width:640px;width:92%;border:1px solid rgba(255,255,255,0.03)}
+
+    /* responsive */
+    @media (max-width:980px){.container{grid-template-columns:1fr;padding:18px} .sidebar{position:relative;order:2} .hero-left{max-width:100%} h1{font-size:32px} }
+  </style>
 </head>
-
 <body>
-  <nav class="navbar">
-    <div class="logo">
-      <img src="z.images/Objective-E.png" alt="Object-E Logo" />
-    </div>
-    <input type="checkbox" id="menu-toggle" />
-    <label for="menu-toggle" class="menu-icon">&#9776;</label>
-    <ul class="nav-links">
-  <li><a href="Home_Pages/index.html">Home</a></li>
-  <li><a href="About_Pages/About.html">About</a></li>
-  <li><a href="Policy_Pages/Policy.html">Policy</a></li>
-  <li><a href="Block_code/main.html">Block Code</a></li>
-</ul>
+  <div class="container">
+    <aside class="sidebar" aria-labelledby="profile">
+      <div class="avatar">MH</div>
+      <div id="profile">
+        <div class="name">Mahdi Hasan</div>
+        <div class="age">14 years old</div>
+        <p class="bio">Student maker focused on robotics, PCBs, and IoT prototypes. I build small physical projects to learn electronics and programming.</p>
+      </div>
 
+      <div class="side-links">
+        <a href="mailto:mahdi.hasan@example.com">✉ Email</a>
+        <a href="#" onclick="event.preventDefault();alert('Add GitHub link in the code')">🐙 GitHub</a>
+        <a href="#" onclick="event.preventDefault();alert('Add LinkedIn link in the code')">🔗 LinkedIn</a>
+      </div>
 
-  </nav>
+      <div style="margin-top:18px;font-size:12px;color:var(--muted)">Made with ❤️ • 14y</div>
+    </aside>
 
-  <!-- Welcome box -->
-  <div class="main-content">
-    <div class="welcome-box">Welcome</div>
+    <main class="main">
+      <section class="hero">
+        <div class="hero-left">
+          <div class="eyebrow">Hi — I’m Mahdi</div>
+          <h1>Robotics & electronics projects<br><span style="font-weight:600;color:#9fe8e0">that I build and learn from</span></h1>
+          <p class="lead">I prototype with microcontrollers, sensors, and small PCBs. Below are a few of my projects — click to open a short summary.</p>
 
-    <div class="card-container">
-       <a href="../Invention/main.html" style="text-decoration: none; color: inherit;">
-
-        <div class="header">
-            <h1>Our Inventions</h1>
-            <img src="z.images/our_project_icon.png" alt="icon" class="header-icon">
+          <div class="cta-row">
+            <a class="btn btn-primary" href="#contact">Contact</a>
+            <a class="btn btn-outline" href="#projects">See projects</a>
+          </div>
         </div>
 
-        <div class="card">
-            <div class="card-image">
-                <img src="z.images/greenhouse_myinven.jpg" alt="Smart Greenhouse">
-            </div>
-            <div class="card-content">
-                <h2>IoT Smart Green House</h2>
-                <p class="inventor">Invented by Mahdi Hasan</p>
-                <p class="description">
-                    Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, from a Lorem Ipsum passage, and going through the cites of the word in clas
-                </p>
-            </div>
+        <div style="width:240px;display:flex;flex-direction:column;align-items:center;gap:12px">
+          <div style="width:220px;height:220px;border-radius:20px;background:linear-gradient(180deg,#042f2e, #08303d);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:28px;color:#9fe8e0">Mahdi</div>
+          <div style="font-size:13px;color:var(--muted);text-align:center">Student • Maker • 14</div>
         </div>
-        <p class="tap-more">Tap to see more</p>
-    </div>
+      </section>
 
-    <div class="tutorials-container">
-    <div class="tutorials-header">
-      <h1>Our Tutorials</h1>
-      <img src="z.images/toutrial_icon.png" alt="Book Icon" class="header-icon" />
-    </div>
+      <section id="projects" class="projects">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <h3 style="margin:0">Projects</h3>
+          <div class="small">6 projects • click a card</div>
+        </div>
 
-    <div class="tutorial-cards">
-      <div class="tutorial-card">
-        <img src="z.images/arduino_image1.jpeg" alt="Arduino Light" class="tutorial-img" />
-        <h2>Arduino Light</h2>
-      </div>
-      <div class="tutorial-card">
-        <img src="z.images/arduino_image2.webp" alt="Arduino Robot" class="tutorial-img" />
-        <h2>Arduino Robot</h2>
-      </div>
-    </div>
+        <div class="projects-grid">
+          <div class="card" data-title="Obstacle-Avoiding Robot" data-desc="Autonomous robot using ultrasonic sensors and simple logic to avoid obstacles.">
+            <div class="card-title">Obstacle-Avoiding Robot</div>
+            <div class="card-sub">Autonomous navigation</div>
+            <div class="tag">Arduino • Sensors</div>
+          </div>
 
-    <p class="tap-more">Tap to see more</p>
+          <div class="card" data-title="Greenhouse IoT" data-desc="IoT greenhouse monitor for temp, humidity and soil moisture with alerts and ideas for automation.">
+            <div class="card-title">Greenhouse IoT</div>
+            <div class="card-sub">Climate monitoring & control</div>
+            <div class="tag">IoT • ESP32</div>
+          </div>
+
+          <div class="card" data-title="Stabilized Spoon" data-desc="Assistive device to reduce hand tremor effects while eating using sensors and a stabilizing mechanism.">
+            <div class="card-title">Stabilized Spoon</div>
+            <div class="card-sub">Assistive hardware</div>
+            <div class="tag">Mechanics • Sensors</div>
+          </div>
+
+          <div class="card" data-title="Robotic Arm" data-desc="Multi-joint arm for pick-and-place demos; servos and basic kinematics.">
+            <div class="card-title">Robotic Arm</div>
+            <div class="card-sub">Pick-and-place demo</div>
+            <div class="tag">Servos • Control</div>
+          </div>
+
+          <div class="card" data-title="Hologram Mat" data-desc="Tabletop hologram-like demo using optics and small displays for visual effects.">
+            <div class="card-title">Hologram Mat</div>
+            <div class="card-sub">Interactive projection</div>
+            <div class="tag">Optics • Demo</div>
+          </div>
+
+          <div class="card" data-title="My Custom PCB" data-desc="Custom PCB I designed for a project — shows schematic, layout and basic components.">
+            <div class="card-title">My Custom PCB</div>
+            <div class="card-sub">Electronics design</div>
+            <div class="tag">KiCad • PCB</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="contact" style="margin-top:28px">
+        <h3>Contact</h3>
+        <p class="small">Email me: <a href="mailto:mahdi.hasan@example.com" style="color:#9fe8e0">mahdi.hasan@example.com</a> — replace with your real email before publishing.</p>
+      </section>
+
+      <footer>Designed in a Showcasy-inspired style • Built by Mahdi Hasan</footer>
+    </main>
   </div>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="dialog">
+      <button onclick="closeModal()" style="background:transparent;border:none;color:#cfe9ef;font-size:20px;float:right;cursor:pointer">✕</button>
+      <h3 id="mt" style="margin-top:4px"></h3>
+      <p id="md" style="color:var(--muted);margin-top:8px"></p>
+    </div>
   </div>
 
+  <script>
+    // project modal
+    document.querySelectorAll('.card').forEach(c=>c.addEventListener('click',()=>{
+      document.getElementById('mt').textContent = c.dataset.title;
+      document.getElementById('md').textContent = c.dataset.desc;
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('modal').setAttribute('aria-hidden','false');
+    }));
+    function closeModal(){document.getElementById('modal').classList.remove('open');document.getElementById('modal').setAttribute('aria-hidden','true');}
+    document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+  </script>
 </body>
-
-<footer class="footer">
-  <div class="footer-container">
-    <!-- Logo Section -->
-    <div class="footer-logo">
-      <img src="z.images/Objective-E.png.png" alt="Your Logo" />
-      <p>Engineering, Electronics, Energy, Environment, Exploration, Etc</p>
-    </div>
-
-    <!-- About Section -->
-    <div class="footer-section">
-      <h3>About Us</h3>
-      <p>Object-E is a non-profitable organization in order to provide free services regarding enggeniering</p>
-    </div>
-
-    <!-- Quick Links Section -->
-    <div class="footer-section">
-      <h3>Quick Links</h3>
-      <ul>
-        <li><a href="#">Home</a></li>
-        <li><a href="#">Inventions</a></li>
-        <li><a href="#">Tutorials</a></li>
-        <li><a href="#">Apps</a></li>
-      </ul>
-    </div>
-
-    <!-- Contact Section -->
-    <div class="footer-section">
-      <h3>Contact</h3>
-      <p>Email: object-e@gmail.com</p>
-      <p>Phone: +123 456 7890</p>
-    </div>
-  </div>
-
-  <div class="footer-bottom">
-    <p>&copy; 2025 Object-E. All rights reserved.</p>
-  </div>
-</footer>
-
-<script src="action.js"></script>
+</html>
