@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PixelBox — Mahdi Hasan</title>
+  <style>
+    :root{
+      --bg:#071226; --card:#0b2134; --muted:#9fb3c6; --accent:#17d2bf; --accent-2:#6cd4ff; --glass: rgba(255,255,255,0.03); --radius:14px; --mono: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    html,body{height:100%;margin:0;font-family:var(--mono);background:linear-gradient(180deg,#041225 0%, #071226 60%);color:#e6f3f7}
+    .wrap{max-width:980px;margin:28px auto;padding:20px}
+    .card{background:var(--card);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02);margin-bottom:16px}
+    h1{margin:0 0 8px 0;font-size:30px}
+    h2{margin:0 0 8px 0;font-size:18px}
+    p{color:var(--muted);margin:6px 0}
+    .lead{color:var(--muted)}
+    .top{display:flex;gap:16px;align-items:center}
+    .avatar{width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:#012}
+    .chips{display:flex;gap:8px;margin-top:8px}
+    .chip{background:var(--glass);padding:6px 10px;border-radius:999px;color:var(--accent-2);font-weight:600}
+
+    .two{display:grid;grid-template-columns:1fr 300px;gap:18px}
+    @media(max-width:900px){.two{grid-template-columns:1fr} .avatar{width:56px;height:56px}}
+
+    .modes{display:flex;gap:10px;margin:12px 0}
+    .mode-btn{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04);padding:8px 10px;border-radius:10px;cursor:pointer}
+    .mode-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#012;border:none}
+
+    .video{background:#062733;border-radius:8px;padding:6px}
+    video{width:100%;height:220px;background:#000;border-radius:6px}
+
+    .gallery{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .gallery img{width:180px;height:120px;object-fit:cover;border-radius:8px;border:3px solid rgba(255,255,255,0.03)}
+
+    .specs ul{color:var(--muted);padding-left:18px;margin:6px 0}
+    .btn{background:var(--accent);color:#012;padding:10px 14px;border-radius:10px;border:none;font-weight:700;cursor:pointer}
+    .small{font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <!-- Header -->
+    <div class="card top">
+      <div>
+        <h1>PixelBox</h1>
+        <p class="lead">PixelBox is an 8×8 Light controller with Bluetooth interface. It has Two modes : <strong>Animation</strong> (sequence frames) and <strong>Realtime</strong> (live control from your phone).</p>
+      </div>
+    </div>
+
+    <!-- What & How (simple flow) -->
+    <div class="card">
+      <h2>What is this project?</h2>
+      <p class="small">PixelBox turns simple pixel drawings into moving light. Use your phone to draw pixels live or build animations from frames and play them on the physical panel.</p>
+
+      <h2 style="margin-top:12px">How it works (quick)</h2>
+      <ol class="small">
+        <li>Phone app -> sends design.</li>
+        <li>System receives design and displays it.</li>
+        <li>Matrix displays the frame. Animation mode sequences frames; Realtime updates instantly.</li>
+      </ol>
+    </div>
+
+    <div class="two">
+      <!-- Left: Modes and Videos -->
+      <div>
+        <div class="card">
+          <h2>Modes</h2>
+          <div class="modes">
+            <button id="modeAnim" class="mode-btn active" onclick="setMode('anim')">Animation</button>
+            <button id="modeRealtime" class="mode-btn" onclick="setMode('realtime')">Realtime</button>
+          </div>
+
+          <div id="panel-anim">
+            <h2 style="font-size:16px;margin-top:6px">Animation (demo)</h2>
+            <div class="video"><video controls><source src="./videos/animation_mode.mp4" type="video/mp4">Your browser does not support video.</video></div>
+            <p class="small">Add frames, set FPS, preview and send to PixelBox to play the sequence.</p>
+          </div>
+
+          <div id="panel-realtime" style="display:none">
+            <h2 style="font-size:16px;margin-top:6px">Realtime (demo)</h2>
+            <div class="video"><video controls><source src="./videos/realtime_mode.mp4" type="video/mp4">Your browser does not support video.</video></div>
+            <p class="small">Draw on the phone — the matrix updates instantly. Adjustable brightness and presets supported.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Why it counts as art</h2>
+          <p class="small"> PixelBox is more than a gadget. It transforms data, motion, and pattern into an expressive medium of light — a fusion of technology and aesthetics. 
+    Each pixel sequence behaves like a brushstroke of digital color, forming shifting geometric rhythms and cultural motifs. 
+    Through motion and luminosity, static pixel art evolves into kinetic light compositions — 
+    a small but living form of art.</p>
+        </div>
+      </div>
+
+      <!-- Right: Specs & PCB proof -->
+      <aside>
+        
+
+        <div class="card">
+          <h2>More About it</h2>
+          <p class="small"> Below are photos of the project.</p>
+          <div class="gallery">
+            <img src="./pictures/pcb_front.jpg" alt="PCB photo 1">
+            <img src="./pictures/pcb_back.jpg" alt="PCB photo 2">
+          </div>
+        </div>
+      </aside>
+    </div>
+
+   
+
+    <div class="card">
+      <h2>Contact</h2>
+      <p class="small">Designed and built by <strong>Mahdi Hasan</strong> Email: mahdihasan3620tics@gmail.com</p>
+    </div>
+
+  </div>
+
+  <script>
+    function setMode(m){
+      document.getElementById('panel-anim').style.display = m==='anim' ? 'block' : 'none';
+      document.getElementById('panel-realtime').style.display = m==='realtime' ? 'block' : 'none';
+      document.getElementById('modeAnim').classList.toggle('active', m==='anim');
+      document.getElementById('modeRealtime').classList.toggle('active', m==='realtime');
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+    function openContact(){ window.location.href = 'mailto:mahdi@example.com?subject=PixelBox%20inquiry'; }
+  </script>
+</body>
+</html>
