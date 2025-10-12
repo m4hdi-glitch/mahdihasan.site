@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Augmented Reality — Mahdi Hasan</title>
+  <style>
+    :root{
+      --bg:#071226; 
+      --card:#0b2134; 
+      --muted:#9fb3c6; 
+      --accent:#17d2bf; 
+      --accent-2:#6cd4ff; 
+      --glass: rgba(255,255,255,0.03); 
+      --radius:14px; 
+      --mono:"Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    html,body{
+      height:100%;margin:0;
+      font-family:var(--mono);
+      background:linear-gradient(180deg,#041225 0%, #071226 60%);
+      color:#e6f3f7;
+    }
+
+    .wrap{max-width:980px;margin:28px auto;padding:20px}
+
+    .card{
+      background:var(--card);
+      border-radius:12px;
+      padding:18px;
+      border:1px solid rgba(255,255,255,0.02);
+      margin-bottom:16px;
+    }
+
+    h1{margin:0 0 8px 0;font-size:30px}
+    h2{margin:0 0 8px 0;font-size:18px}
+    p{color:var(--muted);margin:6px 0}
+    .small{font-size:13px;color:var(--muted)}
+
+    .top{display:flex;gap:16px;align-items:center}
+    .avatar{
+      width:72px;height:72px;
+      border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;
+      font-weight:700;color:#012;
+    }
+
+    .two{display:grid;grid-template-columns:1fr 300px;gap:18px}
+    @media(max-width:900px){.two{grid-template-columns:1fr}}
+
+    .video{background:#062733;border-radius:8px;padding:6px}
+    video{width:100%;height:220px;background:#000;border-radius:6px}
+
+    .gallery{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .gallery img{width:180px;height:120px;object-fit:cover;border-radius:8px;border:3px solid rgba(255,255,255,0.03)}
+
+    .model-section{display:flex;flex-direction:column;gap:14px;margin-top:10px}
+    .model-card{
+      background:linear-gradient(145deg,rgba(11,33,52,0.9),rgba(7,18,38,0.9));
+      border:1px solid rgba(255,255,255,0.05);
+      border-radius:10px;
+      padding:12px 16px;
+      transition:transform 0.3s, box-shadow 0.3s;
+    }
+    .model-card:hover{
+      transform:translateY(-3px);
+      box-shadow:0 0 15px rgba(108,212,255,0.2);
+    }
+
+    .buttons{display:flex;gap:10px;margin-top:8px}
+    .btn{
+      background:var(--glass);
+      color:var(--accent-2);
+      border:1px solid rgba(255,255,255,0.05);
+      padding:8px 14px;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+      transition:background 0.3s;
+    }
+    .btn:hover{
+      background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#012;
+    }
+
+    .highlight{
+      background:rgba(23,210,191,0.08);
+      border-left:3px solid var(--accent);
+      padding:10px;
+      border-radius:8px;
+      margin:10px 0;
+      color:#b8e5f0;
+    }
+
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      margin-top:20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- Header -->
+    <div class="card top">
+      <div>
+        <h1>Augmented Reality</h1>
+        <p class="lead">An interactive AR experience designed to blend <strong>Qatari culture</strong> with <strong>modern technology</strong>. Built by <strong>Mahdi Hasan</strong> for competition showcase.</p>
+      </div>
+    </div>
+
+    <!-- Intro -->
+    <div class="card">
+      <h2>What is this project?</h2>
+      <p class="small">This AR experience brings heritage landmarks and cultural icons to life through interactive 3D models. 
+      It allows users to explore Qatar’s traditions in a modern, immersive way.</p>
+
+      <div class="highlight">
+        <strong>Objective:</strong> To show how technology can preserve and celebrate culture using augmented reality.
+      </div>
+    </div>
+
+    <!-- Culture + Tech -->
+    <div class="card">
+      <h2>Blending Culture with Technology</h2>
+      <p class="small">Our AR system overlays cultural artifacts in real-world space, merging history with innovation. 
+      Using 3D visualization and wireless interaction, users can activate different cultural models through connected physical buttons — 
+      bridging tangible experience with digital storytelling.</p>
+    </div>
+
+  
+
+    <!-- Video -->
+    <div class="card">
+      <h2>Demonstration Video</h2>
+      <div class="video">
+        <video controls>
+          <source src="./videos/AR_Video.mp4" type="video/mp4">
+          Your browser does not support video.
+        </video>
+      </div>
+      <p class="small">Watch how the AR system reacts in real-time when buttons are pressed to switch between models.</p>
+    </div>
+
+      <!-- AR Models Section -->
+    <div class="card">
+      <h2>AR Models</h2>
+      <p class="small">The project includes three core models that symbolize Qatar’s culture and environment:</p>
+
+      <div class="model-section">
+        <div class="model-card">
+          <h3>Desert Rose</h3>
+          <p class="small">Symbol of Qatar’s natural beauty and uniqueness. The AR model shows detailed crystalline texture and organic shape.</p>
+        </div>
+        <div class="model-card">
+          <h3>Bedouin Tent</h3>
+          <p class="small">Represents traditional life and hospitality. In AR, it can be explored from all sides as if standing inside the desert tent.</p>
+        </div>
+        <div class="model-card">
+          <h3>Al Zubarah Fort</h3>
+          <p class="small">One of Qatar’s UNESCO heritage sites, reconstructed digitally to showcase architecture and cultural preservation.</p>
+        </div>
+      </div>
+
+      <div class="buttons">
+        <button class="btn" onclick="showModel('desert')">Desert Rose Button</button>
+        <button class="btn" onclick="showModel('tent')">Bedouin Tent Button</button>
+        <button class="btn" onclick="showModel('fort')">Al Zubarah Fort Button</button>
+      </div>
+
+      <div id="modelDisplay" class="gallery" style="margin-top:12px;"></div>
+    </div>
+
+    <!-- Gallery -->
+    <div class="card">
+      <h2>Gallery</h2>
+      <p class="small">Some visuals from the project and testing phase:</p>
+      <div class="gallery">
+        <img src="./pictures/desert-rose.jpg" alt="AR scene 1">
+        <img src="./pictures/bewin-tent.jpg" alt="AR scene 2">
+        <img src="./pictures/zubara-fort.jpg" alt="AR scene 3">
+        <img src="./pictures/buttons.jpg" alt="AR scene 4">
+      </div>
+    </div>
+
+    <!-- Contact -->
+    <div class="card">
+      <h2>Contact</h2>
+      <p class="small">Designed and developed by <strong>Mahdi Hasan</strong><br>
+      Email: <a href="mailto:mahdihasan3620tics@gmail.com" style="color:var(--accent-2)">mahdihasan3620tics@gmail.com</a></p>
+    </div>
+
+    <div class="footer">
+    </div>
+  </div>
+
+  <script>
+    const images = {
+      desert: ['./pictures/desert-rose.jpg'],
+      tent: ['./pictures/bewin-tent.jpg'],
+      fort: ['./pictures/zubara-fort.jpg']
+    };
+    function showModel(name){
+      const div = document.getElementById('modelDisplay');
+      div.innerHTML = images[name].map(src=>`<img src="${src}" alt="${name} image">`).join('');
+      window.scrollTo({top:div.offsetTop-50,behavior:'smooth'});
+    }
+  </script>
+</body>
+</html>
