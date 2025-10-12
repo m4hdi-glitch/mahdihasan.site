@@ -62,27 +62,53 @@
     </div>
 
     <div class="two">
-      <!-- Left: Modes and Videos -->
-      <div>
-        <div class="card">
-          <h2>Modes</h2>
-          <div class="modes">
-            <button id="modeAnim" class="mode-btn active" onclick="setMode('anim')">Animation</button>
-            <button id="modeRealtime" class="mode-btn" onclick="setMode('realtime')">Realtime</button>
-          </div>
+  <!-- Left: Modes and Videos -->
+  <div>
+    <div class="card">
+      <h2>Modes</h2>
+      <div class="modes">
+        <button id="modeAnim" class="mode-btn active" onclick="setMode('anim')">Animation</button>
+        <button id="modeRealtime" class="mode-btn" onclick="setMode('realtime')">Realtime</button>
+      </div>
 
-          <div id="panel-anim">
-            <h2 style="font-size:16px;margin-top:6px">Animation (demo)</h2>
-            <div class="video"><video controls><source src="./videos/animation_mode.mp4" type="video/mp4">Your browser does not support video.</video></div>
-            <p class="small">Add frames, set FPS, preview and send to PixelBox to play the sequence.</p>
-          </div>
-
-          <div id="panel-realtime" style="display:none">
-            <h2 style="font-size:16px;margin-top:6px">Realtime (demo)</h2>
-            <div class="video"><video controls><source src="./videos/realtime_mode.mp4" type="video/mp4">Your browser does not support video.</video></div>
-            <p class="small">Draw on the phone — the matrix updates instantly. Adjustable brightness and presets supported.</p>
-          </div>
+      <div id="panel-anim">
+        <h2 style="font-size:16px;margin-top:6px">Animation (demo)</h2>
+        <div class="video">
+          <video controls>
+            <source src="./videos/animation_mode.mp4" type="video/mp4">
+            Your browser does not support video.
+          </video>
         </div>
+        <p class="small">
+          Add frames, set FPS, preview and send to PixelBox to play the sequence.  
+          Watch full demo: 
+          <a href="https://youtu.be/7gM9R9R3img" target="_blank" 
+             style="font-size: 20px; font-weight: bold; color: #f0f0f0; background-color: #007BFF; padding: 5px 10px; border-radius: 5px; text-decoration: none;">
+             Watch Animation on YouTube
+          </a>
+        </p>
+      </div>
+
+      <div id="panel-realtime" style="display:none">
+        <h2 style="font-size:16px;margin-top:6px">Realtime (demo)</h2>
+        <div class="video">
+          <video controls>
+            <source src="./videos/realtime_mode.mp4" type="video/mp4">
+            Your browser does not support video.
+          </video>
+        </div>
+        <p class="small">
+          Draw on the phone — the matrix updates instantly. Adjustable brightness and presets supported.  
+          Watch full demo: 
+          <a href="https://youtu.be/oe3lWrvf5fI" target="_blank" 
+             style="font-size: 20px; font-weight: bold; color: #f0f0f0; background-color: #007BFF; padding: 5px 10px; border-radius: 5px; text-decoration: none;">
+             Watch Realtime on YouTube
+          </a>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
 
         <div class="card">
           <h2>Why it counts as art</h2>
@@ -129,3 +155,4 @@
   </script>
 </body>
 </html>
+
