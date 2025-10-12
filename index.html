@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mahdi Hasan — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#071126;
+      --muted:#9fb6c3;
+      --accent1:#06b6d4;
+      --accent2:#10b981;
+      --card:#071722;
+      --radius:14px;
+      color-scheme: dark;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0}
+    body{background:radial-gradient(900px 500px at 10% 10%, rgba(6,182,212,0.05), transparent), radial-gradient(700px 400px at 90% 90%, rgba(16,185,129,0.03), transparent), var(--bg); color:#e6f2f8;-webkit-font-smoothing:antialiased;}
+
+    .wrap{max-width:900px;margin:36px auto;padding:28px;}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);padding:18px;border-radius:var(--radius);}
+
+    header{display:flex;flex-direction:column;align-items:center;text-align:center;margin-bottom:18px}
+    h1{margin:6px 0 0;font-size:42px;font-weight:800}
+    .age{color:var(--muted);font-size:18px;font-weight:500;margin-top:6px}
+    .meta{color:var(--muted);font-size:14px;margin-top:6px}
+    .company{color:#9fe8e0;font-weight:700;text-decoration:none}
+
+    .hero{margin:18px 0}
+    .lead{color:var(--muted);line-height:1.6}
+    .cta{margin-top:12px;display:flex;gap:10px;justify-content:center}
+    .btn{padding:10px 14px;border-radius:12px;font-weight:700;text-decoration:none}
+    .btn-primary{background:linear-gradient(90deg,var(--accent2),var(--accent1));color:#042023}
+    .btn-ghost{border:1px solid rgba(255,255,255,0.06);background:transparent;color:#cfe9ef}
+
+    /* projects */
+    .projects{margin-top:26px}
+    .projects-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:12px}
+    .project{padding:14px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));border:1px solid rgba(255,255,255,0.03);cursor:pointer;transition:transform .16s ease}
+    .project:hover{transform:translateY(-6px)}
+    .project .title{font-weight:700}
+    .project .sub{color:var(--muted);font-size:13px;margin-top:6px}
+
+    /* contact */
+    #contact{margin-top:28px}
+    .contact-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+    .link{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.02);text-decoration:none;color:#ffffff;font-weight:700}
+    .link img{width:18px;height:18px;filter:invert(1)}
+
+    footer{margin-top:30px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.85));}
+    .modal.open{display:flex}
+    .dialog{background:var(--card);padding:18px;border-radius:12px;max-width:680px;width:92%;border:1px solid rgba(255,255,255,0.03)}
+
+    @media (max-width:640px){.wrap{padding:18px;margin:18px 12px} h1{font-size:32px}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="card">
+      <h1>Mahdi Hasan</h1>
+      <div class="age">14 years old student maker</div>
+      <div class="meta">Focused on robotics, PCBs & IoT — Founder of <a class="company" href="https://objective-e.or" target="_blank" rel="noopener">Objective-E</a></div>
+    </header>
+
+    <section class="hero card" aria-labelledby="intro">
+      <h2 id="intro" style="margin:0 0 8px">Test web</h2>
+      <p class="lead">Test Website</p>
+      <div class="cta">
+        <a class="btn btn-primary" href="#contact">Contact</a>
+        <a class="btn btn-ghost" href="#projects">Projects</a>
+      </div>
+    </section>
+
+    <section id="projects" class="projects">
+      <div style="display:flex;align-items:center;justify-content:space-between">
+        <h3 style="margin:0">Projects</h3>
+        <div class="meta">6 projects • click a card</div>
+      </div>
+
+      <div class="projects-grid">
+        <div class="project" data-title="Obstacle-Avoiding Robot" data-desc="Autonomous robot using ultrasonic sensors and simple logic to avoid obstacles.">
+          <div class="title">Testt</div>
+          <div class="sub">////</div>
+        </div>
+
+        <div class="project" data-title="Greenhouse IoT" data-desc="IoT greenhouse monitor for temp, humidity and soil moisture with alerts and ideas for automation.">
+          <div class="title">Greenhouse IoT</div>
+          <div class="sub">Climate monitoring • ESP32</div>
+        </div>
+
+        <div class="project" data-title="Stabilized Spoon" data-desc="Assistive device to reduce hand tremor effects while eating using sensors and a stabilizing mechanism.">
+          <div class="title">Stabilized Spoon</div>
+          <div class="sub">Assistive hardware • Mechanics</div>
+        </div>
+
+        <div class="project" data-title="Robotic Arm" data-desc="Multi-joint arm for pick-and-place demos; servos and basic kinematics.">
+          <div class="title">Robotic Arm</div>
+          <div class="sub">Pick-and-place • Servos</div>
+        </div>
+
+        <div class="project" data-title="Hologram Mat" data-desc="Tabletop hologram-like demo using optics and small displays for visual effects.">
+          <div class="title">Hologram Mat</div>
+          <div class="sub">Optics • Demo</div>
+        </div>
+
+        <div class="project" data-title="My Custom PCB" data-desc="Custom PCB I designed for a project — shows schematic, layout and basic components.">
+          <div class="title">My Custom PCB</div>
+          <div class="sub">PCB design</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="card" aria-labelledby="contact-heading">
+      <h3 id="contact-heading" style="margin-top:0">Contact</h3>
+      <p class="meta">Prefer to keep it simple — email or Instagram only.</p>
+
+      <div class="contact-row">
+        <a id="emailLink" class="link" href="mailto:mahdihasan3620tics@gmail.com">
+  <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/gmail.svg" alt="Email"> Email
+</a>
+        <a class="link" href="https://instagram.com/mahdihasan1_" target="_blank" rel="noopener">
+          <img src="https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg" alt="Instagram"> Instagram
+        </a>
+      </div>
+    </section>
+
+    <footer>
+      <div class="meta">Built by Mahdi Hasan • Founder of Objective-E</div>
+    </footer>
+  </div>
+
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="dialog card">
+      <button onclick="closeModal()" style="background:transparent;border:none;color:#cfe9ef;font-size:20px;float:right;cursor:pointer">✕</button>
+      <h3 id="mt" style="margin-top:4px"></h3>
+      <p id="md" style="color:var(--muted);margin-top:8px"></p>
+    </div>
+  </div>
+
+  <script>
+    document.querySelectorAll('.project').forEach(p=>p.addEventListener('click',()=>{
+      document.getElementById('mt').textContent = p.dataset.title;
+      document.getElementById('md').textContent = p.dataset.desc;
+      document.getElementById('modal').classList.add('open');
+      document.getElementById('modal').setAttribute('aria-hidden','false');
+    }));
+    function closeModal(){document.getElementById('modal').classList.remove('open');document.getElementById('modal').setAttribute('aria-hidden','true');}
+    document.getElementById('modal').addEventListener('click', e=>{ if(e.target===document.getElementById('modal')) closeModal(); });
+
+
+    (function(){
+  const email = 'mahdihasan3620tics@gmail.com';
+  const link = document.getElementById('emailLink');
+
+  // Keep normal mailto behavior for users whose browsers allow it,
+  // but also try programmatic open and fallback to copy-to-clipboard.
+  link.addEventListener('click', function (ev) {
+    // Try to open mailto in a new window/tab (less likely to be blocked than direct window.location)
+    // We still return false to avoid double-handling if window.open worked.
+    ev.preventDefault();
+
+    const mailto = 'mailto:' + email + '?subject=' + encodeURIComponent('Hello Mahdi');
+
+    // Try to open. If returns null or throws, fallback.
+    let opened = null;
+    try {
+      opened = window.open(mailto);
+    } catch (err) {
+      opened = null;
+    }
+
+    // If open returned a window object, assume success.
+    if (opened) {
+      // Optionally focus it
+      try { opened.focus(); } catch (e) {}
+      return;
+    }
+
+    // Fallback: try assign href (some browsers handle this)
+    try {
+      window.location.href = mailto;
+      // give browser a moment — if it doesn't hand off, we go to fallback copy
+      setTimeout(() => {
+        // if page is still visible, try copy fallback below
+        if (!document.hidden) {
+          copyFallback();
+        }
+      }, 600);
+      return;
+    } catch (e) {
+      // continue to copy fallback
+    }
+
+    // Final fallback: copy email to clipboard and notify the user
+    copyFallback();
+
+    function copyFallback(email) {
+  // Check if the browser supports the Clipboard API
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    // Attempt to copy the email address
+    navigator.clipboard.writeText(email).then(() => {
+      // Success: Show alert that it was copied
+      alert("Couldn't open a mail client. The email address was copied to your clipboard: " + email + "\nPaste it into your mail app or webmail (Gmail, Outlook).");
+    }).catch(() => {
+      // Failure to copy (e.g., permission denied): Fall back to prompt
+      prompt("Couldn't open a mail client. Please copy this email address:", email);
+    });
+  } else {
+    // Older browsers or restricted environments: Fall back to prompt
+    prompt("Couldn't open a mail client. Please copy this email address:", email);
+  }
+}
+  });
+})();
+  </script>
+</body>
+</html>
+
+
