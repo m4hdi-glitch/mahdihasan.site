@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
+<title>Flappy — easier controls & spaced pipes</title>
+<style>
+  :root{
+    --bg: #70c5ce;
+    --ui: rgba(255,255,255,0.95);
+    --ground: #ded895;
+  }
+  html,body{height:100%;margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);display:flex;align-items:center;justify-content:center}
+  #wrap{width:100%;max-width:480px;margin:18px;position:relative}
+  canvas{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.25);background:transparent}
+  .ui-top{position:absolute;left:12px;top:12px;color:var(--ui);text-shadow:0 2px 6px rgba(0,0,0,.4);pointer-events:none}
+  .hint{position:absolute;left:50%;transform:translateX(-50%);bottom:-6px;color:rgba(0,0,0,.6);font-size:13px}
+  /* overlay for replay button - centered column */
+  #overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;visibility:hidden}
+  .overlay-card{pointer-events:auto;display:flex;flex-direction:column;align-items:center;background:rgba(255,255,255,0.02);padding:10px;border-radius:14px}
+  #overlay-top-space{width:220px;height:120px;display:block;margin-bottom:8px;background:transparent}
+  #replay-btn{cursor:pointer;display:block;max-width:60%;height:auto;border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,0.35)}
+  #replay-text{margin-top:10px;color:#fff;font-weight:700;text-shadow:0 2px 6px rgba(0,0,0,.45);font-size:18px}
+  .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+</head>
+<body>
+  <div id="wrap" aria-label="Flappy game container">
+    <canvas id="game"></canvas>
+
+    <div class="ui-top" aria-hidden="true">
+      <div id="score" style="font-weight:700;font-size:20px">Score: 0</div>
+      <div id="best" style="font-size:14px;margin-top:4px;opacity:.9">Best: 0</div>
+    </div>
+
+    <div id="overlay" aria-hidden="true">
+      <div class="overlay-card" role="dialog" aria-label="Replay">
+        <div id="overlay-top-space" aria-hidden="true"></div>
+        <img id="replay-btn" src="replay.png" alt="Replay" />
+        <div id="replay-text">Tey Again</div>
+      </div>
+    </div>
+
+    <div class="hint">Tap / Click / Space to flap — first tap starts the game</div>
+  </div>
+
+  <audio id="bgm" loop preload="auto" src="bgm.mp3"></audio>
+  <audio id="hit-sfx" preload="auto" src="hit.mp3"></audio>
+
+<script>
+(() => {
+  /* ===========================
+     TUNABLE CONSTANTS (change these)
+     =========================== */
+  const ASSETS = {
+    background: 'background.png',
+    pillar: 'pillar.png',
+    bird: 'bird.png',
+    replay: 'replay.png'
+  };
+
+  const CANVAS_MAX_WIDTH = 480;
+  const GROUND_HEIGHT = 72;
+
+  // Gameplay tuning (easier)
+  const PIPE_WIDTH = 84;
+  const PIPE_GAP = 210;        // larger gap = easier to pass
+  const PIPE_SPACING = 300;    // used for an extra spawn safety check
+  const BIRD_DISPLAY_HEIGHT = 64;
+    const GRAVITY = 0.5;
+  const FLAP = -7.0;
+  const MAX_FALL_SPEED = 7;
+
+  const BASE_SPEED = 1.5;      // slower pipes
+  const PIPE_SPAWN_MS = 2400;  // spawn interval (ms) — bigger = fewer pillars
+
+  /* ===========================
+     STATE & DOM
+     =========================== */
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d', { alpha: true });
+  const overlay = document.getElementById('overlay');
+  const replayBtn = document.getElementById('replay-btn');
+  const scoreEl = document.getElementById('score');
+  const bestEl = document.getElementById('best');
+  const bgm = document.getElementById('bgm');
+  const hitSfx = document.getElementById('hit-sfx');
+
+  let DPR = Math.max(1, window.devicePixelRatio || 1);
+  let logicalW = 360, logicalH = 640;
+  let bgImg=null, pillarImg=null, birdImg=null;
+  let pipes = [];
+  let lastSpawnTime = 0;
+  let score = 0;
+  let best = parseInt(localStorage.getItem('flappy_best') || '0', 10);
+  let running = false;
+  let gameOver = false;
+  let startedOnce = false;
+  let lastFrameTime = performance.now();
+  const bird = { x: 96, y: 150, vy: 0, w: 0, h: 0, r: 0 };
+
+  /* ===========================
+     ASSET LOADING (preload to avoid burst lag)
+     =========================== */
+  function loadImage(src){ 
+    return new Promise((res) => {
+      const img = new Image();
+      img.onload = () => res(img);
+      img.onerror = () => res(null);
+      img.src = src;
+    });
+  }
+
+  async function preload(){
+    const [bgi, pili, bi] = await Promise.all([
+      loadImage(ASSETS.background),
+      loadImage(ASSETS.pillar),
+      loadImage(ASSETS.bird)
+    ]);
+    bgImg = bgi; pillarImg = pili; birdImg = bi;
+    // set replay image if exists
+    const replayTest = new Image();
+    replayTest.onload = () => { replayBtn.src = ASSETS.replay; };
+    replayTest.onerror = () => {};
+    replayTest.src = ASSETS.replay;
+    init();
+  }
+
+  /* ===========================
+     RESPONSIVE CANVAS
+     =========================== */
+  function resize(){
+    const cssW = Math.min(window.innerWidth - 36, CANVAS_MAX_WIDTH);
+    const cssH = Math.max(420, window.innerHeight - 120);
+    canvas.style.width = cssW + 'px';
+    canvas.style.height = cssH + 'px';
+    DPR = Math.max(1, window.devicePixelRatio || 1);
+    canvas.width = Math.floor(cssW * DPR);
+    canvas.height = Math.floor(cssH * DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    logicalW = cssW;
+    logicalH = cssH;
+    bird.x = Math.round(logicalW * 0.25);
+    if (!running && !gameOver) bird.y = logicalH / 2;
+  }
+  window.addEventListener('resize', resize);
+  document.addEventListener('touchstart', e=>{ if (e.target === canvas) e.preventDefault(); }, {passive:false});
+
+  /* ===========================
+     GAMEPLAY FUNCTIONS
+     =========================== */
+  function resetGame(){
+    pipes = [];
+    score = 0;
+    running = false;
+    gameOver = false;
+    startedOnce = false;
+    bird.vy = 0;
+    bird.h = BIRD_DISPLAY_HEIGHT;
+    bird.w = birdImg ? (birdImg.width * (bird.h / (birdImg.height||bird.h))) : bird.h;
+    bird.r = Math.min(bird.w, bird.h) * 0.45;
+    bird.x = Math.round(logicalW * 0.25);
+    bird.y = Math.round(logicalH / 2);
+    overlay.style.pointerEvents = 'none';
+    overlay.style.visibility = 'hidden';
+    scoreEl.textContent = 'Score: 0';
+    bestEl.textContent = 'Best: ' + best;
+    lastSpawnTime = 0;
+    try { bgm.currentTime = 0; bgm.play().catch(()=>{}); } catch(e){}
+  }
+
+  function spawnPipe(){
+    // ensure there's enough horizontal space since last pipe (extra safety)
+    if (pipes.length > 0){
+      const last = pipes[pipes.length - 1];
+      if (last.x > logicalW && (last.x - logicalW) < PIPE_SPACING * 0.6){
+        // last pipe is still too close horizontally — skip spawn
+        return;
+      }
+    }
+
+    const minGapY = 70;
+    const maxGapY = Math.max(minGapY, logicalH - GROUND_HEIGHT - PIPE_GAP - 40);
+    const gapY = Math.floor(Math.random() * (maxGapY - minGapY + 1)) + minGapY;
+    const startX = logicalW + 40;
+    pipes.push({ x: startX, gapY: gapY, scored: false });
+  }
+
+  function startIfNeeded(){
+    if (!running) running = true;
+    if (!startedOnce){
+      startedOnce = true;
+      lastSpawnTime = performance.now() + 400; // small delay
+    }
+  }
+
+  function flap(){
+    if (gameOver) return;
+    startIfNeeded();
+    // stronger flap: set vy to FLAP
+    bird.vy = FLAP;
+  }
+
+  function triggerGameOver(){
+    if (gameOver) return;
+    gameOver = true;
+    running = false;
+    overlay.style.visibility = 'visible';
+    overlay.style.pointerEvents = 'auto';
+    replayBtn.src = ASSETS.replay;
+    try { hitSfx.currentTime = 0; hitSfx.play(); } catch(e){}
+    try { bgm.pause(); } catch(e){}
+  }
+
+  function circleRectCollision(cx, cy, r, rx, ry, rw, rh){
+    const nearestX = Math.max(rx, Math.min(cx, rx + rw));
+    const nearestY = Math.max(ry, Math.min(cy, ry + rh));
+    const dx = cx - nearestX;
+    const dy = cy - nearestY;
+    return (dx*dx + dy*dy) <= (r*r);
+  }
+
+  /* ===========================
+     UPDATE (time-based)
+     =========================== */
+  function update(now){
+    if (!running) return;
+    const dt = Math.max(1, now - lastFrameTime);
+    lastFrameTime = now;
+
+    // physics
+    bird.vy += GRAVITY;
+    if (bird.vy > MAX_FALL_SPEED) bird.vy = MAX_FALL_SPEED;
+    bird.y += bird.vy * (dt / 16.67); // scale movement by dt (normalize to 60fps)
+
+    // spawn based on time interval (prevents bursts)
+    if (startedOnce && now - lastSpawnTime > PIPE_SPAWN_MS){
+      spawnPipe();
+      lastSpawnTime = now;
+    }
+
+    const speed = BASE_SPEED + Math.min(2.0, score * 0.02);
+    for (let p of pipes) p.x -= speed * (dt / 16.67);
+
+    // scoring & cleanup
+    for (let i = pipes.length - 1; i >= 0; i--){
+      const p = pipes[i];
+      if (!p.scored && p.x + PIPE_WIDTH < bird.x - bird.r){
+        score++;
+        p.scored = true;
+        scoreEl.textContent = 'Score: ' + score;
+        if (score > best) { best = score; bestEl.textContent = 'Best: ' + best; localStorage.setItem('flappy_best', best); }
+      }
+      if (p.x + PIPE_WIDTH < -120) pipes.splice(i,1);
+    }
+
+    // ground collision
+    if (bird.y + bird.r > logicalH - GROUND_HEIGHT){
+      bird.y = logicalH - GROUND_HEIGHT - bird.r;
+      triggerGameOver();
+    }
+    if (bird.y - bird.r < 0){
+      bird.y = bird.r;
+      bird.vy = 0;
+    }
+
+    // pipes collision (top pipe is upside-down)
+    for (let p of pipes){
+      const rx = p.x;
+      const topRect = { x: rx, y: 0, w: PIPE_WIDTH, h: p.gapY };
+      const bottomRect = { x: rx, y: p.gapY + PIPE_GAP, w: PIPE_WIDTH, h: logicalH - (p.gapY + PIPE_GAP) - GROUND_HEIGHT };
+      if (circleRectCollision(bird.x, bird.y, bird.r, topRect.x, topRect.y, topRect.w, topRect.h) ||
+          circleRectCollision(bird.x, bird.y, bird.r, bottomRect.x, bottomRect.y, bottomRect.w, bottomRect.h)){
+        triggerGameOver();
+      }
+    }
+  }
+
+  /* ===========================
+     DRAW
+     =========================== */
+  function draw(){
+    ctx.clearRect(0,0,logicalW,logicalH);
+
+    // background cover
+    if (bgImg && bgImg.width){
+      const scale = Math.max(logicalW / bgImg.width, logicalH / bgImg.height);
+      const bw = bgImg.width * scale, bh = bgImg.height * scale;
+      ctx.drawImage(bgImg, (logicalW - bw)/2, (logicalH - bh)/2, bw, bh);
+    } else {
+      ctx.fillStyle = '#70c5ce';
+      ctx.fillRect(0,0,logicalW,logicalH);
+    }
+
+    // pipes (top is flipped upside-down)
+    if (pillarImg && pillarImg.width){
+      const scale = PIPE_WIDTH / pillarImg.width;
+      const drawW = PIPE_WIDTH;
+      const drawH = pillarImg.height * scale;
+      for (let p of pipes){
+        // TOP: flipped vertically
+        const topX = p.x;
+        const topY = p.gapY - drawH;
+        ctx.save();
+        ctx.translate(topX + drawW/2, topY + drawH/2);
+        ctx.scale(1, -1);
+        ctx.drawImage(pillarImg, -drawW/2, -drawH/2, drawW, drawH);
+        ctx.restore();
+
+        // BOTTOM: normal
+        const bottomX = p.x;
+        const bottomY = p.gapY + PIPE_GAP;
+        ctx.drawImage(pillarImg, bottomX, bottomY, drawW, drawH);
+      }
+    } else {
+      ctx.fillStyle = '#55a630';
+      for (let p of pipes){
+        ctx.fillRect(p.x, 0, PIPE_WIDTH, p.gapY);
+        ctx.fillRect(p.x, p.gapY + PIPE_GAP, PIPE_WIDTH, logicalH - (p.gapY + PIPE_GAP) - GROUND_HEIGHT);
+      }
+    }
+
+    // ground band
+    ctx.fillStyle = '#ded895';
+    ctx.fillRect(0, logicalH - GROUND_HEIGHT, logicalW, GROUND_HEIGHT);
+
+    // bird
+    if (birdImg && birdImg.width){
+      const drawH = bird.h;
+      const drawW = bird.w;
+      ctx.save();
+      // smaller tilt so control feels steady
+      const tilt = Math.max(-0.4, Math.min(0.5, -bird.vy * 0.04));
+      ctx.translate(bird.x, bird.y);
+      ctx.rotate(tilt);
+      ctx.drawImage(birdImg, -drawW/2, -drawH/2, drawW, drawH);
+      ctx.restore();
+    } else {
+      ctx.beginPath();
+      ctx.fillStyle = '#ffdd57';
+      ctx.arc(bird.x, bird.y, bird.r, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    if (gameOver){
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillRect(0,0,logicalW,logicalH);
+    }
+  }
+
+  /* ===========================
+     MAIN LOOP
+     =========================== */
+  function loop(now){
+    if (!lastFrameTime) lastFrameTime = now;
+    update(now);
+    draw();
+    lastFrameTime = now;
+    requestAnimationFrame(loop);
+  }
+
+  /* ===========================
+     INPUT
+     =========================== */
+  window.addEventListener('keydown', e => {
+    if (e.code === 'Space'){ e.preventDefault(); flap(); }
+    if (e.code === 'Enter' && gameOver){ replay(); }
+  });
+  canvas.addEventListener('mousedown', e => { flap(); });
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); flap(); }, {passive:false});
+
+  replayBtn.addEventListener('click', e => { e.stopPropagation(); replay(); });
+  overlay.addEventListener('click', e => { if (e.target === overlay) replay(); });
+
+ function replay(){
+    // STOP HIT SOUND
+    hitSfx.pause();
+    hitSfx.currentTime = 0;
+
+    overlay.style.pointerEvents = 'none';
+    overlay.style.visibility = 'hidden';
+    resetGame();
+}
+
+
+  /* ===========================
+     INIT
+     =========================== */
+  function init(){
+    resize();
+
+    bird.h = BIRD_DISPLAY_HEIGHT;
+    if (birdImg && birdImg.height) bird.w = birdImg.width * (bird.h / birdImg.height);
+    else bird.w = bird.h;
+    bird.r = Math.min(bird.w, bird.h) * 0.45;
+    bird.x = Math.round(logicalW * 0.25);
+    bird.y = Math.round(logicalH / 2);
+
+    overlay.style.visibility = 'hidden';
+    overlay.style.pointerEvents = 'none';
+
+    try { bgm.play().catch(()=>{}); } catch(e){}
+    requestAnimationFrame(loop);
+  }
+
+  preload();
+
+  // expose debug helpers
+  window.__flappy = { reset: resetGame, spawn: spawnPipe };
+
+  // pause/resume audio on visibility change
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden){ try { bgm.pause(); } catch(e){} }
+    else if (!gameOver){ try { bgm.play().catch(()=>{}); } catch(e){} }
+  });
+
+})();
+</script>
+</body>
+</html>
