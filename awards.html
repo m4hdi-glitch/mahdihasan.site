@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Champion Certificate</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    background: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  .certificate {
+    width: 90%;
+    max-width: 600px;
+    background: #fff;
+    border: 8px solid #ffd700;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+    position: relative;
+  }
+  .certificate h1 {
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  .certificate h2 {
+    font-size: 22px;
+    color: #444;
+    margin: 12px 0;
+  }
+  .certificate .bird-img {
+    width: 120px;
+    height: auto;
+    margin: 16px 0;
+  }
+  .certificate .score {
+    font-size: 20px;
+    color: #555;
+    margin: 8px 0;
+  }
+  .certificate .footer {
+    margin-top: 40px;
+    font-size: 14px;
+    color: #888;
+  }
+  .ribbon {
+    width: 80px;
+    height: 80px;
+    background: #ffd700;
+    border-radius: 50%;
+    position: absolute;
+    top: -40px;
+    left: calc(50% - 40px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    font-size: 18px;
+  }
+  .signature {
+    width: 140px;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
+</head>
+<body>
+
+<div class="certificate">
+  <div class="ribbon">🏆</div>
+  <h1>Certificate of Unemployment</h1>
+  <h2>This certificate is proudly presented to</h2>
+  <h1 id="playerName">Yousef Allaudin</h1>
+  <img class="bird-img" src="bird.png" alt="Champion Bird">
+  <div class="score">For achieving the highest score: <strong id="playerScore">1099</strong> points</div>
+  
+  <!-- Signature -->
+  <img class="signature" src="signature.png" alt="Signature">
+
+  <div class="footer">Flappy Khan • Honoring Your Champion</div>
+</div>
+
+<script>
+  // Dynamically set name and score
+  const playerName = "Yousef Allaudin";
+  const playerScore = 1099;
+  document.getElementById("playerName").textContent = playerName;
+  document.getElementById("playerScore").textContent = playerScore;
+</script>
+
+</body>
+</html>
