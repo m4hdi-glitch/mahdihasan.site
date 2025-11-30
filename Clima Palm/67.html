@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" />
+<title>ClimaPalm Control</title>
+<style>
+    body {
+        font-family: Arial;
+        padding: 20px;
+        background: #f0f7f1; /* soft greenish-white */
+        color: #2e4d36;
+    }
+
+    h2 {
+        margin-bottom: 20px;
+        text-align: center;
+        color: #2e7d32;
+    }
+
+    /* TOP BOXES */
+    .row {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+
+    .box {
+        flex: 1;
+        max-width: 130px;
+        background: white;
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+        font-size: 18px;
+        border: 2px solid #a5d6a7;
+        box-shadow: 0 2px 8px #0001;
+        color: #1b5e20;
+    }
+
+    /* LABEL */
+    .label {
+        font-size: 16px;
+        margin-bottom: 6px;
+        text-align: center;
+        color: #2e7d32;
+        font-weight: bold;
+    }
+
+    /* SLIDER BLOCK */
+    .slider-block {
+        margin-bottom: 25px;
+    }
+
+    .slider-container {
+        position: relative;
+        width: 60%;
+        height: 45px;
+        margin: auto;
+    }
+
+    /* background Good → Moderate → Bad */
+    .slider-bg {
+        position: absolute;
+        top: 18px;
+        width: 100%;
+        height: 6px;
+        border-radius: 10px;
+        background: linear-gradient(to right, #4CAF50, #C5E1A5, #FF7043);
+    }
+
+    /* GOOD - MODERATE - BAD text */
+    .slider-texts {
+        position: absolute;
+        width: 100%;
+        top: 0;
+        display: flex;
+        justify-content: space-between;
+        font-size: 12px;
+        color: #1b5e20;
+        padding: 0 5px;
+        font-weight: bold;
+    }
+
+    /* slider */
+    input[type=range] {
+        position: absolute;
+        width: 100%;
+        top: 9px;
+        -webkit-appearance: none;
+        background: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 14px;
+        width: 14px;
+        background: #2e7d32;
+        border-radius: 50%;
+        border: 2px solid white;
+        cursor: pointer;
+    }
+
+    /* MODE BUTTON */
+    button {
+        width: 60%;
+        margin: auto;
+        display: block;
+        padding: 12px;
+        font-size: 18px;
+        border: none;
+        background: #2e7d32;
+        color: white;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    button:active { opacity: .7; }
+</style>
+</head>
+<body>
+
+<h2>ClimaPalm Control Panel</h2>
+
+<!-- ===== TOP DISPLAY ===== -->
+<div class="row">
+    <div class="box">Temp<br><span id="dispT">--</span>°C</div>
+    <div class="box">Hum<br><span id="dispH">--</span>%</div>
+    <div class="box">Air Quality<br><span id="dispMQ">--</span></div>
+    <div class="box">Light<br><span id="dispLDR">--</span></div>
+</div>
+
+<!-- ===== SLIDERS ===== -->
+<div class="slider-block">
+    <div class="label">Temperature</div>
+    <div class="slider-container">
+        <div class="slider-texts">
+            <span>Good</span><span>Moderate</span><span>Bad</span>
+        </div>
+        <div class="slider-bg"></div>
+        <input id="sT" type="range" min="0" max="60" step="0.1">
+    </div>
+</div>
+
+<div class="slider-block">
+    <div class="label">Humidity</div>
+    <div class="slider-container">
+        <div class="slider-texts">
+            <span>Good</span><span>Moderate</span><span>Bad</span>
+        </div>
+        <div class="slider-bg"></div>
+        <input id="sH" type="range" min="0" max="100" step="1">
+    </div>
+</div>
+
+<div class="slider-block">
+    <div class="label">Air Quality</div>
+    <div class="slider-container">
+        <div class="slider-texts">
+            <span>Good</span><span>Moderate</span><span>Bad</span>
+        </div>
+        <div class="slider-bg"></div>
+        <input id="sMQ" type="range" min="0" max="4095" step="1">
+    </div>
+</div>
+
+<div class="slider-block">
+    <div class="label">Light</div>
+    <div class="slider-container">
+        <div class="slider-texts">
+            <span>Good</span><span>Moderate</span><span>Bad</span>
+        </div>
+        <div class="slider-bg"></div>
+        <input id="sLDR" type="range" min="0" max="4095" step="1">
+    </div>
+</div>
+
+<button id="modeBtn">Switch to AUTO</button>
+
+<script>
+const DATABASE_URL = "https://climapalm-default-rtdb.firebaseio.com";
+const DATABASE_SECRET = "wa6RL1PoibubsWxVCVnsg4Rv9J6pVhHGAA7FZ8Ki";
+
+let mode = "manual";
+
+const dispT = document.getElementById("dispT");
+const dispH = document.getElementById("dispH");
+const dispMQ = document.getElementById("dispMQ");
+const dispLDR = document.getElementById("dispLDR");
+
+const sT = document.getElementById("sT");
+const sH = document.getElementById("sH");
+const sMQ = document.getElementById("sMQ");
+const sLDR = document.getElementById("sLDR");
+const modeBtn = document.getElementById("modeBtn");
+
+function setSlidersDisabled(disabled) {
+    sT.disabled = disabled;
+    sH.disabled = disabled;
+    sMQ.disabled = disabled;
+    sLDR.disabled = disabled;
+}
+
+function sendManual() {
+    if (mode !== "manual") return;
+
+    const data = {
+        temp: Number(sT.value),
+        humidity: Number(sH.value),
+        mq: Number(sMQ.value),
+        ldr: Number(sLDR.value)
+    };
+
+    fetch(`${DATABASE_URL}/manual.json?auth=${DATABASE_SECRET}`, {
+        method: "PUT",
+        body: JSON.stringify(data)
+    });
+}
+
+// fetch live data from Firebase for AUTO
+function fetchAutoData() {
+    if (mode !== "auto") return;
+
+    fetch(`${DATABASE_URL}/current.json?auth=${DATABASE_SECRET}`)
+        .then(r => r.json())
+        .then(d => {
+            if (!d) return;
+            dispT.textContent = d.temp ?? "--";
+            dispH.textContent = d.humidity ?? "--";
+            dispMQ.textContent = d.mq ?? "--";
+            dispLDR.textContent = d.ldr ?? "--";
+        });
+}
+
+// immediately update display with current database values
+function updateDisplayFromDB() {
+    fetch(`${DATABASE_URL}/current.json?auth=${DATABASE_SECRET}`)
+        .then(r => r.json())
+        .then(d => {
+            if (!d) return;
+            dispT.textContent = d.temp ?? "--";
+            dispH.textContent = d.humidity ?? "--";
+            dispMQ.textContent = d.mq ?? "--";
+            dispLDR.textContent = d.ldr ?? "--";
+        });
+}
+
+modeBtn.onclick = () => {
+    if (mode === "manual") {
+        mode = "auto";
+        modeBtn.textContent = "Switch to MANUAL";
+        setSlidersDisabled(true);
+
+        fetch(`${DATABASE_URL}/control.json?auth=${DATABASE_SECRET}`, {
+            method: "PUT",
+            body: JSON.stringify("auto")
+        });
+
+        // Immediately fetch latest values from DB
+        updateDisplayFromDB();
+
+    } else {
+        mode = "manual";
+        modeBtn.textContent = "Switch to AUTO";
+        setSlidersDisabled(false);
+
+        fetch(`${DATABASE_URL}/control.json?auth=${DATABASE_SECRET}`, {
+            method: "PUT",
+            body: JSON.stringify("manual")
+        });
+    }
+};
+
+function updateDisplayFromSliders() {
+    dispT.textContent = sT.value;
+    dispH.textContent = sH.value;
+    dispMQ.textContent = sMQ.value;
+    dispLDR.textContent = sLDR.value;
+}
+
+[sT, sH, sMQ, sLDR].forEach(slider => {
+    slider.addEventListener("input", () => {
+        updateDisplayFromSliders();
+        sendManual();
+    });
+});
+
+// continuously update AUTO display
+setInterval(fetchAutoData, 800);
+</script>
+
+</body>
+</html>
