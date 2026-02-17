@@ -1,0 +1,22 @@
+[
+  {
+    "title": "Math Formulas",
+    "content": "Quadratic: x=(-b+/-sqrt(b^2-4ac))/2a\nArea circle=pi*r^2\nVolume sphere=4/3*pi*r^3\nSlope=rise/run=(y2-y1)/(x2-x1)"
+  },
+  {
+    "title": "Physics Laws",
+    "content": "F=ma (Newton 2nd)\nv=u+at\ns=ut+1/2*at^2\nv^2=u^2+2as\nKE=1/2*mv^2\nPE=mgh\nP=W/t (power)"
+  },
+  {
+    "title": "Chemistry",
+    "content": "PV=nRT (ideal gas)\npH=-log[H+]\nMolarity=moles/litre\nAvogadro=6.022x10^23\nAtomic mass unit=1.66x10^-27 kg"
+  },
+  {
+    "title": "English Tips",
+    "content": "Affect=verb, Effect=noun\nThere=place, Their=possessive, They're=they are\nUse active voice when possible"
+  },
+  {
+    "title": "Biology",
+    "content": "Cell: nucleus holds DNA\nPhotosynthesis: CO2+H2O->C6H12O6+O2 (needs sunlight)\nRespiration: C6H12O6+O2->CO2+H2O+ATP"
+  }
+]
