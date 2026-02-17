@@ -1,24 +1,15 @@
 {
   "weekday": [
-    {"startHour": 20, "startMin": 10, "endHour": 20, "endMin": 55, "name": "BANGLA"},
-    {"startHour": 20, "startMin": 55, "endHour": 21, "endMin": 10, "name": "BREAK"},
-    {"startHour": 21, "startMin": 10, "endHour": 21, "endMin": 55, "name": "ENGLISH"},
-    {"startHour": 21, "startMin": 55, "endHour": 22, "endMin": 40, "name": "MATH"},
-    {"startHour": 22, "startMin": 40, "endHour": 22, "endMin": 55, "name": "RECESS"},
-    {"startHour": 22, "startMin": 55, "endHour": 23, "endMin": 40, "name": "PHYSICS"},
-    {"startHour": 23, "startMin": 40, "endHour": 0,  "startMin": 25, "name": "CHEM"},
-    {"startHour": 0,  "startMin": 25, "endHour": 1,  "endMin": 10, "name": "LUNCH"},
-    {"startHour": 1,  "startMin": 10, "endHour": 1,  "endMin": 55, "name": "BIO"},
-    {"startHour": 1,  "startMin": 55, "endHour": 2,  "endMin": 40, "name": "ICT"},
-    {"startHour": 2,  "startMin": 40, "endHour": 3,  "endMin": 25, "name": "HISTORY"}
+    {"startHour": 21, "startMin": 0,  "endHour": 21, "endMin": 45, "name": "BANGLA"},
+    {"startHour": 21, "startMin": 45, "endHour": 22, "endMin": 0,  "name": "BREAK"},
+    {"startHour": 22, "startMin": 0,  "endHour": 22, "endMin": 45, "name": "ENGLISH"},
+    {"startHour": 22, "startMin": 45, "endHour": 23, "endMin": 0,  "name": "MATH"},
+    {"startHour": 23, "startMin": 0,  "endHour": 23, "endMin": 15, "name": "RECESS"},
+    {"startHour": 23, "startMin": 15, "endHour": 23, "endMin": 30, "name": "PHYSICS"},
+    {"startHour": 23, "startMin": 30, "endHour": 23, "endMin": 59, "name": "HISTORY"}
   ],
   "saturday": [
-    {"startHour": 20, "startMin": 10, "endHour": 20, "endMin": 55, "name": "BANGLA"},
-    {"startHour": 20, "startMin": 55, "endHour": 21, "endMin": 10, "name": "BREAK"},
-    {"startHour": 21, "startMin": 10, "endHour": 21, "endMin": 55, "name": "MATH"},
-    {"startHour": 21, "startMin": 55, "endHour": 22, "endMin": 40, "name": "ENGLISH"},
-    {"startHour": 22, "startMin": 40, "endHour": 22, "endMin": 55, "name": "RECESS"},
-    {"startHour": 22, "startMin": 55, "endHour": 23, "endMin": 40, "name": "PHYSICS"},
-    {"startHour": 23, "startMin": 40, "endHour": 0,  "startMin": 25, "name": "CHEM"}
+    {"startHour": 21, "startMin": 0,  "endHour": 22, "endMin": 0,  "name": "MATH"},
+    {"startHour": 22, "startMin": 0,  "endHour": 23, "endMin": 59, "name": "ENGLISH"}
   ]
 }
