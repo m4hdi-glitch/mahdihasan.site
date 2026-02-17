@@ -1,0 +1,24 @@
+{
+  "weekday": [
+    {"startHour": 8,  "startMin": 0,  "endHour": 8,  "endMin": 45, "name": "BANGLA"},
+    {"startHour": 8,  "startMin": 45, "endHour": 9,  "endMin": 0,  "name": "BREAK"},
+    {"startHour": 9,  "startMin": 0,  "endHour": 9,  "endMin": 45, "name": "ENGLISH"},
+    {"startHour": 9,  "startMin": 45, "endHour": 10, "endMin": 30, "name": "MATH"},
+    {"startHour": 10, "startMin": 30, "endHour": 10, "endMin": 45, "name": "RECESS"},
+    {"startHour": 10, "startMin": 45, "endHour": 11, "endMin": 30, "name": "PHYSICS"},
+    {"startHour": 11, "startMin": 30, "endHour": 12, "endMin": 15, "name": "CHEM"},
+    {"startHour": 12, "startMin": 15, "endHour": 13, "endMin": 0,  "name": "LUNCH"},
+    {"startHour": 13, "startMin": 0,  "endHour": 13, "endMin": 45, "name": "BIO"},
+    {"startHour": 13, "startMin": 45, "endHour": 14, "endMin": 30, "name": "ICT"},
+    {"startHour": 14, "startMin": 30, "endHour": 15, "endMin": 15, "name": "HISTORY"}
+  ],
+  "saturday": [
+    {"startHour": 8,  "startMin": 0,  "endHour": 8,  "endMin": 45, "name": "BANGLA"},
+    {"startHour": 8,  "startMin": 45, "endHour": 9,  "endMin": 0,  "name": "BREAK"},
+    {"startHour": 9,  "startMin": 0,  "endHour": 9,  "endMin": 45, "name": "MATH"},
+    {"startHour": 9,  "startMin": 45, "endHour": 10, "endMin": 30, "name": "ENGLISH"},
+    {"startHour": 10, "startMin": 30, "endHour": 10, "endMin": 45, "name": "RECESS"},
+    {"startHour": 10, "startMin": 45, "endHour": 11, "endMin": 30, "name": "PHYSICS"},
+    {"startHour": 11, "startMin": 30, "endHour": 12, "endMin": 15, "name": "CHEM"}
+  ]
+}
