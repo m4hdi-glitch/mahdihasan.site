@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 14px; background: #f1f1f1; height: 100vh; }
+
+  /* ── LOCK SCREEN ── */
+  #lockScreen {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    height: 100vh; gap: 12px;
+  }
+  #lockScreen h2 { font-size: 18px; color: #333; }
+  #lockScreen input {
+    padding: 8px 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;
+    width: 200px; text-align: center; letter-spacing: 4px;
+  }
+  #lockScreen input:focus { outline: none; border-color: #4a90d9; }
+  #lockScreen button {
+    width: 200px; padding: 8px; font-size: 14px; background: #4a90d9; color: white;
+    border: none; border-radius: 4px; cursor: pointer;
+  }
+  #lockScreen button:hover { background: #3a7bc8; }
+  #lockError { color: red; font-size: 12px; display: none; }
+
+  /* ── APP ── */
+  #app { display: none; flex-direction: column; height: 100vh; }
+
+  .top-bar {
+    background: #fff; border-bottom: 1px solid #ccc; padding: 8px 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .top-bar h1 { font-size: 15px; flex: 1; }
+  .top-bar span { font-size: 12px; color: #888; }
+
+  .main { display: flex; flex: 1; overflow: hidden; }
+
+  /* SIDEBAR */
+  .sidebar { width: 210px; background: #fff; border-right: 1px solid #ccc; display: flex; flex-direction: column; }
+  .sidebar-top { padding: 8px; border-bottom: 1px solid #ddd; }
+  .note-list { flex: 1; overflow-y: auto; }
+  .note-item { padding: 8px 10px; border-bottom: 1px solid #eee; cursor: pointer; }
+  .note-item:hover { background: #f5f5f5; }
+  .note-item.active { background: #dce8f8; }
+  .note-item-title { font-weight: bold; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .note-item-sub { font-size: 11px; color: #999; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* EDITOR */
+  .editor { flex: 1; display: flex; flex-direction: column; background: #fff; margin: 8px; border: 1px solid #ccc; }
+  .editor-bar { padding: 6px 8px; border-bottom: 1px solid #ddd; background: #fafafa; display: flex; gap: 6px; align-items: center; }
+  .editor-body { flex: 1; display: flex; flex-direction: column; padding: 12px; gap: 8px; }
+
+  /* INPUTS */
+  input[type="text"], textarea {
+    width: 100%; padding: 5px 6px; border: 1px solid #ccc; border-radius: 3px;
+    font-family: Arial, sans-serif; font-size: 13px;
+  }
+  input[type="text"]:focus, textarea:focus { outline: none; border-color: #4a90d9; }
+  .title-field { font-size: 17px; font-weight: bold; border: none; border-bottom: 1px solid #ccc; border-radius: 0; padding: 4px 2px; }
+  .title-field:focus { border-bottom-color: #4a90d9; }
+  .content-field { flex: 1; resize: none; font-family: monospace; font-size: 13px; line-height: 1.6; min-height: 300px; }
+
+  /* BUTTONS */
+  button { padding: 4px 10px; font-size: 13px; border: 1px solid #aaa; border-radius: 3px; background: #f0f0f0; cursor: pointer; }
+  button:hover { background: #e0e0e0; }
+  .btn-blue { background: #4a90d9; color: #fff; border-color: #3a7bc8; }
+  .btn-blue:hover { background: #3a7bc8; }
+  .btn-red { color: #c00; }
+  .btn-red:hover { background: #fdd; }
+  button:disabled { opacity: 0.45; cursor: default; pointer-events: none; }
+
+  .empty-msg { flex: 1; display: flex; align-items: center; justify-content: center; color: #bbb; font-size: 13px; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 14px; right: 14px; padding: 7px 14px;
+    border-radius: 4px; font-size: 13px; color: #fff; display: none; z-index: 100;
+  }
+  #toast.ok  { background: #2a7a2a; display: block; }
+  #toast.err { background: #a00;    display: block; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOCK SCREEN ══════════════════════════════════════════════ -->
+<div id="lockScreen">
+  <h2>🔒 Notes</h2>
+  <input type="password" id="pinInput" placeholder="Enter PIN" maxlength="20"
+    onkeydown="if(event.key==='Enter') unlock()">
+  <button onclick="unlock()">Unlock</button>
+  <span id="lockError">Wrong PIN, try again</span>
+</div>
+
+<!-- ══ APP ══════════════════════════════════════════════════════ -->
+<div id="app">
+  <div class="top-bar">
+    <h1>📝 Notes</h1>
+    <span id="statusText"></span>
+    <button onclick="lock()" style="font-size:12px;padding:3px 8px;">🔒 Lock</button>
+  </div>
+
+  <div class="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="sidebar-top">
+        <button class="btn-blue" style="width:100%;margin-bottom:5px" onclick="addNote()">+ New Note</button>
+        <button style="width:100%" onclick="loadNotes()" id="loadBtn">↓ Load</button>
+      </div>
+      <div class="note-list" id="noteList">
+        <div style="padding:10px;color:#bbb;font-size:12px;">No notes loaded</div>
+      </div>
+    </div>
+
+    <!-- Editor -->
+    <div class="editor">
+      <div class="editor-bar">
+        <button class="btn-red" id="deleteBtn" onclick="deleteNote()" disabled>Delete</button>
+        <div style="flex:1"></div>
+        <button class="btn-blue" id="saveBtn" onclick="saveNotes()">↑ Save</button>
+      </div>
+      <div class="editor-body" id="editorBody">
+        <div class="empty-msg">Select or create a note</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ════════════════════════════════════════════════════════════════
+  //  ⚙  CHANGE THESE TWO LINES
+  // ════════════════════════════════════════════════════════════════
+  const FIREBASE_URL = "https://rubix-command-section-default-rtdb.firebaseio.com";
+  const NOTES_PATH   = "/notes";
+  const PIN          = "1234";          // ← change your PIN here
+  // ════════════════════════════════════════════════════════════════
+
+  let notes = [];
+  let current = -1;
+
+  // ── Lock / Unlock ──────────────────────────────────────────────
+  function unlock() {
+    const val = document.getElementById('pinInput').value;
+    if (val === PIN) {
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      document.getElementById('pinInput').value = '';
+      document.getElementById('lockError').style.display = 'none';
+      loadNotes();
+    } else {
+      document.getElementById('lockError').style.display = 'block';
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinInput').focus();
+    }
+  }
+
+  function lock() {
+    flushEditor();
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('lockScreen').style.display = 'flex';
+    document.getElementById('pinInput').focus();
+  }
+
+  // ── Toast ──────────────────────────────────────────────────────
+  function toast(msg, type = 'ok') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = type;
+    clearTimeout(t._t);
+    t._t = setTimeout(() => t.className = '', 3000);
+  }
+
+  // ── Firebase ───────────────────────────────────────────────────
+  async function fbGet() {
+    const res = await fetch(FIREBASE_URL + NOTES_PATH + '.json');
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return await res.json();
+  }
+
+  async function fbPut(data) {
+    const res = await fetch(FIREBASE_URL + NOTES_PATH + '.json', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+  }
+
+  // ── Load ───────────────────────────────────────────────────────
+  async function loadNotes() {
+    const btn = document.getElementById('loadBtn');
+    btn.disabled = true; btn.textContent = 'Loading…';
+    document.getElementById('statusText').textContent = 'Loading…';
+    try {
+      const data = await fbGet();
+      notes = [];
+      if (Array.isArray(data)) {
+        notes = data.filter(Boolean);
+      } else if (data && typeof data === 'object') {
+        notes = Object.keys(data).sort((a,b) => a-b).map(k => data[k]).filter(Boolean);
+      }
+      current = -1;
+      renderList();
+      renderEmpty();
+      document.getElementById('statusText').textContent = notes.length + ' notes';
+    } catch(e) {
+      toast('Load failed: ' + e.message, 'err');
+      document.getElementById('statusText').textContent = 'Load failed';
+    }
+    btn.disabled = false; btn.textContent = '↓ Load';
+  }
+
+  // ── Save ───────────────────────────────────────────────────────
+  async function saveNotes() {
+    flushEditor();
+    const btn = document.getElementById('saveBtn');
+    btn.disabled = true; btn.textContent = 'Saving…';
+    try {
+      await fbPut(notes);
+      toast('Saved ✓');
+      document.getElementById('statusText').textContent = 'Saved ' + new Date().toLocaleTimeString();
+    } catch(e) {
+      toast('Save failed: ' + e.message, 'err');
+    }
+    btn.disabled = false; btn.textContent = '↑ Save';
+  }
+
+  // ── CRUD ───────────────────────────────────────────────────────
+  function addNote() {
+    flushEditor();
+    notes.push({ title: 'New Note', content: '' });
+    current = notes.length - 1;
+    renderList();
+    renderEditor();
+    setTimeout(() => document.getElementById('noteTitle')?.focus(), 30);
+  }
+
+  function deleteNote() {
+    if (current < 0) return;
+    if (!confirm('Delete "' + notes[current].title + '"?')) return;
+    notes.splice(current, 1);
+    current = Math.min(current, notes.length - 1);
+    renderList();
+    current >= 0 ? renderEditor() : renderEmpty();
+  }
+
+  function selectNote(i) {
+    flushEditor();
+    current = i;
+    renderList();
+    renderEditor();
+  }
+
+  function flushEditor() {
+    if (current < 0) return;
+    const t = document.getElementById('noteTitle');
+    const c = document.getElementById('noteContent');
+    if (t) notes[current].title   = t.value;
+    if (c) notes[current].content = c.value;
+  }
+
+  // ── Render ─────────────────────────────────────────────────────
+  function renderList() {
+    const el = document.getElementById('noteList');
+    if (!notes.length) {
+      el.innerHTML = '<div style="padding:10px;color:#bbb;font-size:12px;">No notes</div>';
+      document.getElementById('deleteBtn').disabled = true;
+      return;
+    }
+    el.innerHTML = notes.map((n, i) => `
+      <div class="note-item ${i===current?'active':''}" onclick="selectNote(${i})">
+        <div class="note-item-title">${esc(n.title) || 'Untitled'}</div>
+        <div class="note-item-sub">${esc((n.content||'').split('\n')[0]) || '—'}</div>
+      </div>
+    `).join('');
+    document.getElementById('deleteBtn').disabled = current < 0;
+  }
+
+  function renderEditor() {
+    const n = notes[current];
+    document.getElementById('editorBody').innerHTML = `
+      <input class="title-field" id="noteTitle" type="text"
+        value="${escA(n.title)}" placeholder="Title…" style="width:100%">
+      <textarea class="content-field" id="noteContent"
+        placeholder="Write here…">${esc(n.content)}</textarea>
+    `;
+    document.getElementById('deleteBtn').disabled = false;
+  }
+
+  function renderEmpty() {
+    document.getElementById('editorBody').innerHTML =
+      '<div class="empty-msg">Select or create a note</div>';
+    document.getElementById('deleteBtn').disabled = true;
+  }
+
+  function esc(s='')  { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function escA(s='') { return String(s).replace(/"/g,'&quot;').replace(/&/g,'&amp;'); }
+
+  // Focus PIN input on load
+  document.getElementById('pinInput').focus();
+</script>
+</body>
+</html>
