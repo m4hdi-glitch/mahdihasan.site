@@ -87,9 +87,9 @@
 
 <!-- ══ LOCK SCREEN ══════════════════════════════════════════════ -->
 <div id="lockScreen">
-  <h2>🔒 Notes</h2>
+  <h2>Smart Watch</h2>
   <input type="password" id="pinInput" placeholder="Enter PIN" maxlength="20"
-    onkeydown="if(event.key==='Enter') unlock()">
+    onkeydown="if(event.key==='Enter') unlock();" >
   <button onclick="unlock()">Unlock</button>
   <span id="lockError">Wrong PIN, try again</span>
 </div>
@@ -97,9 +97,9 @@
 <!-- ══ APP ══════════════════════════════════════════════════════ -->
 <div id="app">
   <div class="top-bar">
-    <h1>📝 Notes</h1>
+    <h1>Notes</h1>
     <span id="statusText"></span>
-    <button onclick="lock()" style="font-size:12px;padding:3px 8px;">🔒 Lock</button>
+    <button onclick="lock()" style="font-size:12px;padding:3px 8px;">Lock</button>
   </div>
 
   <div class="main">
@@ -136,16 +136,26 @@
   // ════════════════════════════════════════════════════════════════
   const FIREBASE_URL = "https://rubix-command-section-default-rtdb.firebaseio.com";
   const NOTES_PATH   = "/notes";
-  const PIN          = "1234";          // ← change your PIN here
+  // PIN is stored as a SHA-256 hash — the real PIN is never in the code.
+  // To change your PIN: type your new PIN at https://emn178.github.io/online-tools/sha256.html
+  // and paste the result below.
+  const PIN_HASH = "bdb4043f84470c45a6873be4e99bf94220c33d1d98723ba0529d1c50c4bf7d34"; // = 1234
   // ════════════════════════════════════════════════════════════════
 
   let notes = [];
   let current = -1;
 
+  // ── SHA-256 helper (built into browser, no library needed) ─────
+  async function sha256(str) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  }
+
   // ── Lock / Unlock ──────────────────────────────────────────────
-  function unlock() {
+  async function unlock() {
     const val = document.getElementById('pinInput').value;
-    if (val === PIN) {
+    const hashed = await sha256(val);
+    if (hashed === PIN_HASH) {
       document.getElementById('lockScreen').style.display = 'none';
       document.getElementById('app').style.display = 'flex';
       document.getElementById('pinInput').value = '';
